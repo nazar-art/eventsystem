@@ -16,7 +16,7 @@ public class LockedEventManagerTest {
 
     @Test
     public void testRegisterListenerAndPublishEvent() {
-        final MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
+        MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
         eventManager.registerListener("some.key", someEventListener);
 
         eventManager.publishEvent(new MySomeEventClass());
@@ -27,44 +27,48 @@ public class LockedEventManagerTest {
 
     @Test
     public void testUnregisterListener() {
-        final MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
+        MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
         eventManager.registerListener("some.key", someEventListener);
         eventManager.unregisterListener("some.key");
 
         eventManager.publishEvent(new MySomeEventClass());
         eventManager.publishEvent(new MyAnotherEventClass());
+
         assertEquals(0, someEventListener.count);
     }
 
     @Test
     public void testExcluding() {
-        final MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
+        MySomeEventListener someEventListener = new MySomeEventListener(MySomeEventClass.class);
         eventManager.registerListener("some.key", someEventListener);
 
         eventManager.publishEvent(new MySomeEventClass());
         eventManager.publishEvent(new MyAnotherEventClass());
+
         assertEquals(1, someEventListener.count);
     }
 
     @Test
     public void processAll() {
-        final MySomeEventListener someEventListener = new MySomeEventListener();
+        MySomeEventListener someEventListener = new MySomeEventListener();
         eventManager.registerListener("some.key", someEventListener);
 
         eventManager.publishEvent(new MySomeEventClass());
         eventManager.publishEvent(new MyAnotherEventClass());
         eventManager.publishEvent(new MyMoreEventClass());
+
         assertEquals(3, someEventListener.count);
     }
 
     @Test
     public void processSome1() {
-        final MySomeEventListener someEventListener = new MySomeEventListener(MyMoreEventClass.class, MyAnotherEventClass.class);
+        MySomeEventListener someEventListener = new MySomeEventListener(MyMoreEventClass.class, MyAnotherEventClass.class);
         eventManager.registerListener("some.key", someEventListener);
 
         eventManager.publishEvent(new MySomeEventClass());
         eventManager.publishEvent(new MyAnotherEventClass());
         eventManager.publishEvent(new MyMoreEventClass());
+
         assertEquals(2, someEventListener.count);
     }
 
@@ -76,6 +80,7 @@ public class LockedEventManagerTest {
         eventManager.publishEvent(new MySomeEventClass());
         eventManager.publishEvent(new MyAnotherEventClass());
         eventManager.publishEvent(new MyMoreEventClass());
+
         assertEquals(1, someEventListener.count);
     }
 }

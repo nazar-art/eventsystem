@@ -26,6 +26,7 @@ public class DefaultEventManagerTest {
         MockEventListener mockEventListener = new MockEventListener(new Class[]{SpecificTestEvent.class});
         eventManager.registerListener("some.key", mockEventListener);
         eventManager.publishEvent(new SpecificTestEvent());
+
         assertTrue(mockEventListener.isCalled());
     }
 
@@ -45,6 +46,7 @@ public class DefaultEventManagerTest {
         MockEventListener mockEventListener = new MockEventListener(new Class[]{BaseTestEvent.class});
         eventManager.registerListener("some.key", mockEventListener);
         eventManager.publishEvent(new SpecificTestEvent());
+
         assertFalse(mockEventListener.isCalled());
     }
 
@@ -58,6 +60,7 @@ public class DefaultEventManagerTest {
         eventManager.unregisterListener("some.key");
 
         eventManager.publishEvent(new SpecificTestEvent());
+
         assertFalse(mockEventListener.isCalled());
         assertTrue(mockEventListener2.isCalled());
     }
@@ -70,10 +73,13 @@ public class DefaultEventManagerTest {
     public void testRemoveNonexistentListener() {
         DefaultEventManager dem = (DefaultEventManager) eventManager;
         assertEquals(0, dem.getListeners().size());
+
         eventManager.registerListener("some.key", new MockEventListener(new Class[]{SpecificTestEvent.class}));
         assertEquals(1, dem.getListeners().size());
+
         eventManager.unregisterListener("this.key.is.not.registered");
         assertEquals(1, dem.getListeners().size());
+
         eventManager.unregisterListener("some.key");
         assertEquals(0, dem.getListeners().size());
     }

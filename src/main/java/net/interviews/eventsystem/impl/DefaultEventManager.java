@@ -1,14 +1,18 @@
 package net.interviews.eventsystem.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import lombok.Getter;
 import net.interviews.eventsystem.Event;
 import net.interviews.eventsystem.EventListener;
 import net.interviews.eventsystem.EventManager;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Manages the firing and receiving of events.
@@ -19,13 +23,10 @@ import java.util.Map;
  * {@link #registerListener(String, EventListener)}
  */
 public class DefaultEventManager implements EventManager {
+    @Getter
+    private Map<String, EventListener> listeners = Maps.newHashMap();
+    private Map<Class<?>, List<EventListener>> listenersByClass = Maps.newHashMap();
 
-    private Map<String, EventListener> listeners = new HashMap<>();
-    private Map<Class<?>, List<EventListener>> listenersByClass = new HashMap<>();
-
-    public Map<String, EventListener> getListeners() {
-        return listeners;
-    }
 
     @Override
     public void publishEvent(Event event) {
@@ -34,16 +35,17 @@ public class DefaultEventManager implements EventManager {
             return;
         }
 
-        sendEventTo(event, calculateListeners(event.getClass()));
-    }
+        List<EventListener> listenersToProcess = listenersByClass.get(event.getClass());
 
-    private Collection<EventListener> calculateListeners(Class eventClass) {
-        return listenersByClass.get(eventClass);
+        if (listenersToProcess == null || listenersToProcess.size() == 0)
+            return;
+
+        listenersToProcess.forEach(l -> l.handleEvent(event));
     }
 
     @Override
     public void registerListener(String listenerKey, EventListener listener) {
-        if (listenerKey == null || listenerKey.equals(""))
+        if (listenerKey == null || listenerKey.isEmpty())
             throw new IllegalArgumentException("Key for the listener must not be null: " + listenerKey);
 
         if (listener == null)
@@ -52,10 +54,11 @@ public class DefaultEventManager implements EventManager {
         if (listeners.containsKey(listenerKey))
             unregisterListener(listenerKey);
 
-        Class[] classes = listener.getHandledEventClasses();
 
-        for (final Class aClass : classes) {
-            addToListenerList(aClass, listener);
+        Class[] classes = listener.getHandledEventClasses();
+        for (Class aClass : classes) {
+            listenersByClass.putIfAbsent(aClass, Lists.newArrayList());
+            listenersByClass.get(aClass).add(listener);
         }
 
         listeners.put(listenerKey, listener);
@@ -65,28 +68,7 @@ public class DefaultEventManager implements EventManager {
     public void unregisterListener(String listenerKey) {
         EventListener listener = listeners.get(listenerKey);
 
-        for (List<EventListener> list : listenersByClass.values()) {
-            list.remove(listener);
-        }
-
+        listenersByClass.values().forEach(l -> l.remove(listener));
         listeners.remove(listenerKey);
     }
-
-
-    private void sendEventTo(Event event, Collection<EventListener> listeners) {
-        if (listeners == null || listeners.size() == 0)
-            return;
-
-        for (EventListener eventListener : listeners) {
-            eventListener.handleEvent(event);
-        }
-    }
-
-    private void addToListenerList(Class aClass, EventListener listener) {
-        if (!listenersByClass.containsKey(aClass))
-            listenersByClass.put(aClass, new ArrayList<>());
-
-        listenersByClass.get(aClass).add(listener);
-    }
-
 }

@@ -5,16 +5,6 @@ import net.interviews.eventsystem.Event;
 import net.interviews.eventsystem.EventListener;
 import net.interviews.eventsystem.EventManager;
 
-/**
- * Simplistic implementation for project structure illustration only.
- *
- * <p>This is <b>not</b> the code you will be working on.
- *
- * <p>When the test starts you will receive a different copy of the project that will contain a much more advanced
- * implementation of the EventManager.
- * It will still be relatively simple (under 100 lines of code in the class) but in contrast to this example class
- * it will actually implement the contract.
- */
 public class SimpleEventManager implements EventManager {
 
     private EventListener listener;
