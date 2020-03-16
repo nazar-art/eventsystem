@@ -1,17 +1,15 @@
 package net.interviews.eventsystem.impl;
 
-import net.interviews.eventsystem.Event;
-import net.interviews.eventsystem.EventListener;
 import net.interviews.eventsystem.EventManager;
+import net.interviews.eventsystem.SpecificTestEvent;
+import net.interviews.eventsystem.mock.BaseTestEvent;
+import net.interviews.eventsystem.mock.MockEventListener;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Nazar Lelyak.
- */
 public class DefaultEventManagerTest {
 
     private EventManager eventManager = new DefaultEventManager();
@@ -24,6 +22,7 @@ public class DefaultEventManagerTest {
     @Test
     public void testRegisterListenerAndPublishEvent() {
         MockEventListener mockEventListener = new MockEventListener(new Class[]{SpecificTestEvent.class});
+
         eventManager.registerListener("some.key", mockEventListener);
         eventManager.publishEvent(new SpecificTestEvent());
 
@@ -31,19 +30,20 @@ public class DefaultEventManagerTest {
     }
 
     @Test
-    public void testRegisterListenerAndPublishEventWithoutFiltering() {
-        System.out.println("New Method Test");
-        MockEventListener mockEventListener = new MockEventListener(new Class[]{SpecificTestEvent.class, NewSpecificTestEvent.class});
-        eventManager.registerListener("some.key", mockEventListener);
+    public void testRegisterListenerAndPublishAllEvents() {
+        MockEventListener mockEventListener = new MockEventListener(new Class[] {});
 
-        eventManager.publishEvent(new NewSpecificTestEvent());
+        eventManager.registerListener("some.key", mockEventListener);
+        eventManager.publishEvent(new SpecificTestEvent());
 
         assertTrue(mockEventListener.isCalled());
     }
 
+
     @Test
     public void testListenerWithoutMatchingEventClass() {
         MockEventListener mockEventListener = new MockEventListener(new Class[]{BaseTestEvent.class});
+
         eventManager.registerListener("some.key", mockEventListener);
         eventManager.publishEvent(new SpecificTestEvent());
 
@@ -116,52 +116,5 @@ public class DefaultEventManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddValidKeyWithNullListener() {
         eventManager.registerListener("bogus.key", null);
-    }
-}
-
-/**
- * An implementation of EventListener used for tests.
- */
-class MockEventListener implements EventListener {
-    private int count;
-    private boolean called;
-    private final Class[] handledClasses;
-
-    public MockEventListener(Class[] handledClasses) {
-        this.handledClasses = handledClasses;
-    }
-
-    @Override
-    public void handleEvent(Event event) {
-        called = true;
-        count++;
-    }
-
-    public void resetCalled() {
-        called = false;
-    }
-
-    public boolean isCalled() {
-        return called;
-    }
-
-    @Override
-    public Class[] getHandledEventClasses() {
-        return handledClasses;
-    }
-}
-
-class BaseTestEvent implements Event {
-}
-
-class NewSpecificTestEvent extends BaseTestEvent implements Event {
-    public NewSpecificTestEvent() {
-        System.out.println("New Me");
-    }
-}
-
-class SpecificTestEvent extends BaseTestEvent implements Event {
-    public SpecificTestEvent() {
-        System.out.println(" Me");
     }
 }
