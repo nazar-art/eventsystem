@@ -1,5 +1,6 @@
 package net.interviews.eventsystem.impl;
 
+import lombok.Getter;
 import net.interviews.eventsystem.Event;
 import net.interviews.eventsystem.EventListener;
 import net.interviews.eventsystem.EventManager;
@@ -19,7 +20,7 @@ import java.util.Map;
  * {@link #registerListener(String, EventListener)}
  */
 public class DefaultEventManager implements EventManager {
-
+    @Getter
     private Map<String, EventListener> listeners = new HashMap<>();
     private Map<Class<?>, List<EventListener>> listenersByClass = new HashMap<>();
 
@@ -86,9 +87,5 @@ public class DefaultEventManager implements EventManager {
             listenersByClass.put(aClass, new ArrayList<>());
 
         listenersByClass.get(aClass).add(listener);
-    }
-
-    public Map<String, EventListener> getListeners() {
-        return listeners;
     }
 }

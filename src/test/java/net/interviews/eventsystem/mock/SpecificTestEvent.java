@@ -1,4 +1,6 @@
-package net.interviews.eventsystem;
+package net.interviews.eventsystem.mock;
+
+import net.interviews.eventsystem.Event;
 
 //public class SpecificTestEvent /*extends BaseTestEvent*/ implements Event {
 public class SpecificTestEvent implements Event {

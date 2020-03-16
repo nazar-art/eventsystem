@@ -1,7 +1,7 @@
 package net.interviews.eventsystem.impl;
 
 import net.interviews.eventsystem.EventManager;
-import net.interviews.eventsystem.SpecificTestEvent;
+import net.interviews.eventsystem.mock.SpecificTestEvent;
 import net.interviews.eventsystem.mock.BaseTestEvent;
 import net.interviews.eventsystem.mock.MockEventListener;
 import org.junit.Test;
@@ -28,17 +28,6 @@ public class DefaultEventManagerTest {
 
         assertTrue(mockEventListener.isCalled());
     }
-
-    @Test
-    public void testRegisterListenerAndPublishAllEvents() {
-        MockEventListener mockEventListener = new MockEventListener(new Class[] {});
-
-        eventManager.registerListener("some.key", mockEventListener);
-        eventManager.publishEvent(new SpecificTestEvent());
-
-        assertTrue(mockEventListener.isCalled());
-    }
-
 
     @Test
     public void testListenerWithoutMatchingEventClass() {
@@ -116,5 +105,18 @@ public class DefaultEventManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddValidKeyWithNullListener() {
         eventManager.registerListener("bogus.key", null);
+    }
+
+    /**
+     * Tests from interview process.
+     */
+    @Test
+    public void testRegisterListenerAndPublishAllEvents() {
+        MockEventListener mockEventListener = new MockEventListener(new Class[] {});
+
+        eventManager.registerListener("some.key", mockEventListener);
+        eventManager.publishEvent(new SpecificTestEvent());
+
+        assertTrue(mockEventListener.isCalled());
     }
 }
