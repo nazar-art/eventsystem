@@ -1,14 +1,17 @@
 package net.interviews.eventsystem.mock;
 
+import lombok.Getter;
+import lombok.ToString;
 import net.interviews.eventsystem.Event;
 import net.interviews.eventsystem.EventListener;
 
 /**
  * An implementation of EventListener used for tests.
  */
+@ToString
 public class MockEventListener implements EventListener {
-
-    public int count;
+    @Getter
+    private int count;
     private boolean called;
     private final Class[] handledClasses;
 
@@ -34,5 +37,4 @@ public class MockEventListener implements EventListener {
     public boolean isCalled() {
         return called;
     }
-
 }

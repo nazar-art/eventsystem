@@ -33,8 +33,22 @@ public class DefaultEventManager implements EventManager {
 
         sendEventTo(event, calculateListeners(event.getClass()));
 
-        // register all events -> put all
-//        sendEventTo(event, list);
+        // if we have no registered listeners by class - we should handle all events passed at this case
+        if (listenersByClass.isEmpty() && !listeners.isEmpty()) {
+            processAnyEvent(event);
+        }
+    }
+
+    private void processAnyEvent(Event event) {
+//        listeners.values().stream()
+//            .filter(l -> l.getHandledEventClasses().length == 0)
+//            .forEach(l -> l.handleEvent(event));
+
+            for (EventListener listener : listeners.values()) {
+                if (listener.getHandledEventClasses().length == 0) {
+                    listener.handleEvent(event);
+                }
+            }
     }
 
     @Override
@@ -70,7 +84,21 @@ public class DefaultEventManager implements EventManager {
 
 
     private Collection<EventListener> calculateListeners(Class eventClass) {
-        return listenersByClass.get(eventClass);
+        // get all parents for event and check listeners by class
+        List<EventListener> result = listenersByClass.get(eventClass);
+
+        if (result == null && eventClass.getSuperclass() != null) {
+
+            Class superCl = eventClass.getSuperclass();
+            if (listenersByClass.containsKey(superCl)) {
+                result = listenersByClass.get(superCl);
+            }
+
+            if (superCl.getSuperclass() != null)
+                return calculateListeners(superCl.getSuperclass());
+        }
+
+        return result;
     }
 
     private void sendEventTo(Event event, Collection<EventListener> listeners) {
