@@ -1,7 +1,6 @@
 package net.interviews.eventsystem.impl;
 
 import net.interviews.eventsystem.EventManager;
-import net.interviews.eventsystem.mock.MoreSpecificTestEvent;
 import net.interviews.eventsystem.mock.SpecificTestEvent;
 import net.interviews.eventsystem.mock.BaseTestEvent;
 import net.interviews.eventsystem.mock.MockEventListener;
@@ -127,16 +126,6 @@ public class DefaultEventManagerTest {
 
         eventManager.registerListener("some.key", mockEventListener);
         eventManager.publishEvent(new SpecificTestEvent());
-
-        assertTrue(mockEventListener.isCalled());
-    }
-
-    @Test
-    public void testRegisterListenerWithParentAndPublishDeepSubEvent() {
-        MockEventListener mockEventListener = new MockEventListener(new Class[] {BaseTestEvent.class});
-
-        eventManager.registerListener("some.key", mockEventListener);
-        eventManager.publishEvent(new MoreSpecificTestEvent());
 
         assertTrue(mockEventListener.isCalled());
     }

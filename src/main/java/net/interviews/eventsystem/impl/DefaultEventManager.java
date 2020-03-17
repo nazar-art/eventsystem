@@ -85,20 +85,9 @@ public class DefaultEventManager implements EventManager {
 
     private Collection<EventListener> calculateListeners(Class eventClass) {
         // get all parents for event and check listeners by class
-        List<EventListener> result = listenersByClass.get(eventClass);
-
-        if (result == null && eventClass.getSuperclass() != null) {
-
-            Class superCl = eventClass.getSuperclass();
-            if (listenersByClass.containsKey(superCl)) {
-                result = listenersByClass.get(superCl);
-            }
-
-            if (superCl.getSuperclass() != null)
-                return calculateListeners(superCl.getSuperclass());
-        }
-
-        return result;
+        return listenersByClass.containsKey(eventClass.getSuperclass())
+                ? listenersByClass.get(eventClass.getSuperclass())
+                : listenersByClass.get(eventClass);
     }
 
     private void sendEventTo(Event event, Collection<EventListener> listeners) {
