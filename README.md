@@ -1,6 +1,6 @@
 #### two tasks:
 
-- bug fix:
+- description of a bug:
 
       I created a new event listener that would receive all events without filtering them by class.  
       I registered it exactly as described in the JavaDoc of your API but it does not receive any events.
